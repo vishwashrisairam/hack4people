@@ -21,3 +21,9 @@ export type TabTwoParamList = {
 export type TabThreeParamList = {
   TabThreeScreen: undefined;
 };
+
+
+export type AuthParamList = {
+  Login: undefined ;
+  Register: undefined;
+}
