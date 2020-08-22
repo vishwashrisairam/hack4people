@@ -1,8 +1,8 @@
 import React,{useState} from 'react';
-import { StyleSheet,View,Text,ScrollView,Modal, TouchableHighlight } from 'react-native';
+import { StyleSheet,View,Text,ScrollView,Modal, TouchableHighlight,Dimensions } from 'react-native';
 import {  Button, Card, Title,TextInput} from 'react-native-paper';
 import {useDispatch,useSelector} from 'react-redux';
-// import Spinner from 'react-native-loading-spinner-overlay';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 export default function CheckoutItem({navigation,route}) {
 
@@ -24,32 +24,38 @@ export default function CheckoutItem({navigation,route}) {
 
  console.log('loading',loading)
   const placeOrder = () => {
-    console.log('placing order')
     dispatch({type:"SET_LOADING",payload:true})
-    console.log(loading)
-
+    // console.log(loading)
+    dispatch({type:"SET_LOADING",payload:false})
+    setModalVisible(true);
+    
   }
 
   return (
     <ScrollView style={styles.container}>
-       {/* <Modal
+
+       <Modal
         animationType="slide"
         visible={modalVisible}
+        transparent
         onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={styles.modalText}>Hello World!</Text>
+            <Text style={styles.modalText}>Order Placed successfully!!!</Text>
 
             <TouchableHighlight
               style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-              onPress={() => setModalVisible(!modalVisible)}
+              onPress={() => {
+                setModalVisible(!modalVisible)
+                navigation.pop()
+              }}
             >
-              <Text style={styles.textStyle}>Hide Modal</Text>
+              <Text style={styles.textStyle}>Close</Text>
             </TouchableHighlight>
           </View>
         </View>
-      </Modal> */}
+      </Modal>
        <Card style={styles.cardItem}>
         <Card.Cover source={{ uri: imageUrl }} style={{height:400}} />
         <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
@@ -57,7 +63,10 @@ export default function CheckoutItem({navigation,route}) {
           <Title>{itemName}</Title>
           <Text>{description}</Text>
         </Card.Content>
-        
+         <Spinner
+          visible={loading}
+          textContent={'Loading...'}
+        />
         <Card.Actions>
           <Button 
             icon="star" 
@@ -213,14 +222,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 22
+    marginTop: 52,
+    backgroundColor: 'rgba(0,0,0,0.7)',
   },
   modalView: {
-    margin: 20,
+    margin: 10,
     backgroundColor: "white",
     borderRadius: 20,
     padding: 35,
     alignItems: "center",
+    justifyContent:"space-between",
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -228,13 +239,16 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    elevation: 5
+    elevation: 5,
+    width:Dimensions.get('window').width-50,
+    height:200
   },
   openButton: {
     backgroundColor: "#F194FF",
     borderRadius: 20,
     padding: 10,
-    elevation: 2
+    elevation: 2,
+    width:100
   },
   textStyle: {
     color: "white",
