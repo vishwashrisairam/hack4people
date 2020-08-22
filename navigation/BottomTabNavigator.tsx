@@ -6,10 +6,12 @@ import * as React from 'react';
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import Scan from '../screens/Scan';
+import ScanResult from '../screens/ScanResult';
 import Redeem from '../screens/Redeem';
 import Profile from '../screens/Profile';
 
 import { BottomTabParamList, TabOneParamList, TabTwoParamList, TabThreeParamList } from '../types';
+import CheckoutItem from '../screens/CheckoutItem';
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -63,6 +65,11 @@ function TabOneNavigator() {
         component={Scan}
         options={{ headerTitle: 'Scan Section' }}
       />
+      <TabOneStack.Screen
+        name="ScanResult"
+        component={ScanResult}
+        options={{ headerTitle: 'Scan Result' }}
+      />
     </TabOneStack.Navigator>
   );
 }
@@ -76,6 +83,11 @@ function TabTwoNavigator() {
         name="TabTwoScreen"
         component={Redeem}
         options={{ headerTitle: 'Redeem Section' }}
+      />
+      <TabTwoStack.Screen
+        name="CheckoutItem"
+        component={CheckoutItem}
+        options={{ headerTitle: 'Checkout Item' }}
       />
     </TabTwoStack.Navigator>
   );
