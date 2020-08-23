@@ -1,21 +1,29 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet,View,Text,FlatList } from 'react-native';
 import {  Button, Card, Title } from 'react-native-paper';
 import {useDispatch,useSelector} from 'react-redux';
+import axios from 'axios';
+import { compose } from 'redux';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 export default function Redeem({navigation}) {
 
   const dispatch = useDispatch()
   const {loading,store}=useSelector(state=> state) 
   const userPoints = 1000;
+  console.log('store',store)
+
+  useEffect(()=>{
+    fetchData();
+  },[])
 
   const storeItemsList = x => {
     return (
-      <Card style={styles.cardItem} key={x.itemId}>
-        <Card.Cover source={{ uri: x.imageUrl }} />
+      <Card style={styles.cardItem} key={x.id}>
+        <Card.Cover source={{ uri: x.imageurl }} />
         <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
         <Card.Content>
-          <Title>{x.itemName.length <=20 ? x.itemName : x.itemName.substring(0,20)+'...'}</Title>
+          <Title>{x.name.length <=20 ? x.name : x.name.substring(0,20)+'...'}</Title>
         </Card.Content>
         
         <Card.Actions>
@@ -24,10 +32,10 @@ export default function Redeem({navigation}) {
             mode="contained" 
             compact={true} 
             color="gold" 
-            disabled={x.points>userPoints}
+            disabled={x.points_to_redeem>userPoints}
             onPress = { ()=> navigation.navigate("CheckoutItem",x)}
           >
-            {x.points}
+            {x.points_to_redeem}
           </Button>
         </Card.Actions>
         </View>
@@ -37,6 +45,12 @@ export default function Redeem({navigation}) {
 
   const fetchData = () => {
     console.log('fetching data')
+    dispatch({type:"SET_LOADING",payload:true});
+    axios.get('https://hackcloudfinal.uc.r.appspot.com/store')
+      .then(res => {
+        dispatch({type:"SET_LOADING",payload:false});
+        dispatch({type:"SET_STORE",payload:res.data.data.store})
+      })
   }
 
   return (
@@ -53,11 +67,14 @@ export default function Redeem({navigation}) {
           </View>
         </Card.Content>
       </Card>
-
+      <Spinner
+          visible={loading}
+          textContent={'Loading...'}
+        />
       <FlatList
             data={store}
             renderItem={({item})=>storeItemsList(item)}
-            keyExtractor={item=>item.itemId}
+            keyExtractor={item=>item.id}
             refreshing={loading}
             onRefresh={()=>fetchData()}
         />
