@@ -1,51 +1,66 @@
 import * as React from 'react';
-import {useSelector,useDispatch} from 'react-redux';
-import { StyleSheet } from 'react-native';
-
+import { useSelector, useDispatch } from 'react-redux';
+import { StyleSheet,ScrollView,View,Text } from 'react-native';
+import { TextInput } from 'react-native-paper';
 
 // import EditScreenInfo from '../components/EditScreenInfo';
-import { Text, View } from '../components/Themed';
-import {Button} from 'react-native-paper';
+// import { Text, View } from '../components/Themed';
+import { Button } from 'react-native-paper';
 
-export default function Login({navigation}) {
-
+export default function Login({ navigation }) {
+  const [valueEmail, onChangeText] = React.useState('Email');
+  const [valuePassword] = React.useState('Password');
   const dispatch = useDispatch()
-  const {isAuth}=useSelector(state=> state) 
+  const { isAuth } = useSelector((state: any) => state)
 
-  const authenticate = () =>{
+  const authenticate = () => {
     console.log('authenticated')
-    dispatch({type:'LOGIN'})
+    dispatch({ type: 'LOGIN' })
     // navigation.navigate("Root")
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Login</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      {/* <EditScreenInfo path="/screens/TabTwoScreen.tsx" /> */}
-      {/**navigation.navigate("Register") */}  
-      <Button 
+      <TextInput
+        style={{ height: 40, borderColor: 'gray', borderWidth: 1, margin: 20 }}
+        onChangeText={text => onChangeText(text)}
+        placeholder={valueEmail}
+        textContentType={"username"}
+        keyboardType={"email-address"}
+      />
+      <TextInput
+        style={{ height: 40, borderColor: 'gray', borderWidth: 1, margin: 20 }}
+        // onChangeText={text => onChangeText(text)}
+        placeholder={valuePassword}
+        textContentType={"password"}
+        keyboardType={"visible-password"}
+        secureTextEntry={true}
+      />
+      <Button
+        style={{ margin: 20 }}
         icon="account-edit"
         mode="contained"
-        onPress={()=>authenticate()} 
-    > Login</Button>
-    <Text style={{color: 'blue'}}
+        onPress={() => authenticate()}
+      > Login</Button>
+      <Text style={{ color: 'blue',textAlign: 'center' }}
         onPress={() => navigation.navigate("Register")}>
         Click here to Register !!!
     </Text>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
+    flexDirection:"column",
     justifyContent: 'center',
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
+    textAlign: 'center',
   },
   separator: {
     marginVertical: 30,

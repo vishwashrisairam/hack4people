@@ -9,6 +9,7 @@ import Scan from '../screens/Scan';
 import ScanResult from '../screens/ScanResult';
 import Redeem from '../screens/Redeem';
 import Profile from '../screens/Profile';
+import EditProfile from '../screens/EditProfile';
 
 import { BottomTabParamList, TabOneParamList, TabTwoParamList, TabThreeParamList } from '../types';
 import CheckoutItem from '../screens/CheckoutItem';
@@ -101,6 +102,11 @@ function TabThreeNavigator() {
         name="TabThreeScreen"
         component={Profile}
         options={{ headerTitle: 'Profile Page' }}
+      />
+      <TabThreeStack.Screen
+        name="EditProfile"
+        component={EditProfile}
+        options={{ headerTitle: 'Edit Page' }}
       />
     </TabThreeStack.Navigator>
   );
