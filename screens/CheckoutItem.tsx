@@ -1,8 +1,11 @@
 import React,{useState} from 'react';
-import { StyleSheet,View,Text,ScrollView,Modal, TouchableHighlight,Dimensions } from 'react-native';
+import { StyleSheet,View,Text,ScrollView,Modal, TouchableHighlight,Dimensions,Alert } from 'react-native';
 import {  Button, Card, Title,TextInput} from 'react-native-paper';
 import {useDispatch,useSelector} from 'react-redux';
 import Spinner from 'react-native-loading-spinner-overlay';
+
+import axios from 'axios';
+
 
 export default function CheckoutItem({navigation,route}) {
 
@@ -10,9 +13,9 @@ export default function CheckoutItem({navigation,route}) {
   const {loading,store}=useSelector(state=> state) 
   const userPoints = 1000;
 
-  const {itemName,itemId,description,imageUrl,points} = route.params;
+  const {name,id,description,imageurl,points_to_redeem} = route.params;
   
-  const [name,setName] = useState("");
+  const [fullName,setFullName] = useState("");
   const [email,setEmail] = useState("");
   const [phone,setPhone] = useState("");
   const [address1,setAddress1] = useState("");
@@ -22,12 +25,40 @@ export default function CheckoutItem({navigation,route}) {
   const [zip,setZip] = useState("");
   const [modalVisible , setModalVisible] = useState(false);
 
- console.log('loading',loading)
   const placeOrder = () => {
-    dispatch({type:"SET_LOADING",payload:true})
-    // console.log(loading)
-    dispatch({type:"SET_LOADING",payload:false})
-    setModalVisible(true);
+    
+      dispatch({type:"SET_LOADING",payload:true})
+
+      let reqObj = {
+        storeitemId : id,
+        redeemPoints  : points_to_redeem,
+        userName : fullName,
+        email : email,  
+        phone  : phone.toString(),
+        addL1 : address1,
+        addL2 : address2,
+        city : city,
+        state : state,
+        zipCode : zip.toString(),
+        country : "US"
+      }
+      console.log(reqObj)
+
+      axios.post('https://hackcloudfinal.uc.r.appspot.com/placeorder',reqObj)
+        .then(res => {
+          console.log(res.data)
+          dispatch({type:"SET_LOADING",payload:false})
+          setModalVisible(true);
+        })
+        .catch(err => {
+          console.log(err)
+          dispatch({type:"SET_LOADING",payload:false})
+          Alert.alert('Something went wrong', 'Please try again', [
+            { text: 'Ok', onPress: () => console.log(123) }
+          ]);
+        })
+      // console.log(loading)
+      
     
   }
 
@@ -57,10 +88,10 @@ export default function CheckoutItem({navigation,route}) {
         </View>
       </Modal>
        <Card style={styles.cardItem}>
-        <Card.Cover source={{ uri: imageUrl }} style={{height:400}} />
+        <Card.Cover source={{ uri: imageurl }} style={{height:400}} />
         <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
         <Card.Content>
-          <Title>{itemName}</Title>
+          <Title>{name}</Title>
           <Text>{description}</Text>
         </Card.Content>
          <Spinner
@@ -74,7 +105,7 @@ export default function CheckoutItem({navigation,route}) {
             compact={true} 
             color="gold" 
           >
-            {points}
+            {points_to_redeem}
           </Button>
         </Card.Actions>
         </View>
@@ -89,12 +120,12 @@ export default function CheckoutItem({navigation,route}) {
         <View>
             <TextInput
                 label="Name"
-                value={name}
+                value={fullName}
                 style={styles.inputStyle}
                 theme={theme}
                 mode="outlined"
                 maxLength={30}
-                onChangeText={text=>setName(text)}
+                onChangeText={text=>setFullName(text)}
             />
             <TextInput
                 label="Email"

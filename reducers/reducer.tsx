@@ -32,6 +32,19 @@ export const reducer = (state=initState,action)=>{
                 ...state,
                 store:action.payload
             }
+        case "SET_USER_DETAILS":
+            return {
+                ...state,
+                user:action.payload
+            }
+        case "UPDATE_POINTS":
+            return{
+                ...state,
+                user:{
+                    
+                    Points:action.payload
+                }
+            }
     }
     return state
 }

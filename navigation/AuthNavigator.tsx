@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { createStackNavigator } from '@react-navigation/stack';
-import * as React from 'react';
+import React,{useState} from 'react';
 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
@@ -13,7 +13,8 @@ import { AuthParamList } from '../types';
 export default function AuthNavigator() {
   const colorScheme = useColorScheme();
   const AuthStack = createStackNavigator<AuthParamList>();
-
+  
+  const [isLoginScreen,setIsLoginScreen] = useState(false);
 
   return (
     <AuthStack.Navigator>

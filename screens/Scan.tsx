@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Image, Dimensions } from 'react-native';
+import { Text, View, StyleSheet, Image, Dimensions,Alert } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 
 // import { Text, View } from '../components/Themed';
 import { FAB, Colors } from 'react-native-paper';
+import { useSelector, useDispatch } from 'react-redux';
 
 export default function Scan({navigation}) {
 
@@ -11,6 +12,10 @@ export default function Scan({navigation}) {
   const [showCamera, setShowCamera] = useState(false);
   const [scanned,setScanned] = useState(false);
 
+  const dispatch = useDispatch();
+  const { user } = useSelector(state => state);
+
+  const {Points} = user
 
   useEffect(() => {
     (async () => {
@@ -22,8 +27,12 @@ export default function Scan({navigation}) {
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
     setShowCamera(false);
-    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
     console.log(data)
+    Alert.alert('Congratulation', 'You won 50 points', [
+      { text: 'Ok', onPress: () => console.log(123) }
+    ]);
+    // dispatch({type:"UPDATE_POINTS",payload:Points+50})
+    
     navigation.navigate("ScanResult")
   };
 

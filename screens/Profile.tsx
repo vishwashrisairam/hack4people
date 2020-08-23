@@ -8,13 +8,16 @@ import {Entypo} from '@expo/vector-icons';
 export default function TabTwoScreen({ navigation }) {
 
   const dispatch = useDispatch();
-  const { isAuth } = useSelector(state => state);
+  const { isAuth,user } = useSelector(state => state);
   const [valueUsername] = React.useState('Simba');
   const [valuePhone] = React.useState('000-000-0000');
 
   const logout = () => {
     dispatch({ type: "LOGOUT" })
   }
+
+  console.log('profile page',user)
+  const {Firstname,Lastname,Email,Phone} = user ;
 
   const editpage = () => {
     console.log('edit profile');
@@ -36,7 +39,6 @@ export default function TabTwoScreen({ navigation }) {
       {/* <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" /> */}
       <View style={{flex:1,alignItems:"center"}}> 
         <Avatar.Image size={100} source={require('../assets/images/default-user.jpg')} style={{ margin: 10,justifyContent:"center" }} />
-        <Text style={styles.subtitle}>lionking@gmail.com</Text>
       </View>
 
       <Card 
@@ -48,7 +50,7 @@ export default function TabTwoScreen({ navigation }) {
                   size={20} 
                   color="#006aff"
               />
-              <Text style={styles.myText}>Simba</Text>
+              <Text style={styles.myText}>{Firstname+' '+Lastname}</Text>
           </View>
       </Card>
       <Card 
@@ -60,7 +62,7 @@ export default function TabTwoScreen({ navigation }) {
                   size={25} 
                   color="#006aff"
               />
-              <Text style={styles.myText}>abc@xyz.com</Text>
+              <Text style={styles.myText}>{Email}</Text>
           </View>
       </Card>
 
@@ -73,7 +75,7 @@ export default function TabTwoScreen({ navigation }) {
                   size={25} 
                   color="#006aff"
               />
-              <Text style={styles.myText}>12321</Text>
+              <Text style={styles.myText}>{Phone}</Text>
           </View>
       </Card>
       <Button

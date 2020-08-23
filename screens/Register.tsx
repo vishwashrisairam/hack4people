@@ -1,10 +1,13 @@
 import  React,{useState} from 'react';
 import { TextInput } from 'react-native-paper';
-import { StyleSheet,ScrollView,Text,KeyboardAvoidingView, Platform } from 'react-native';
+import { StyleSheet,ScrollView,Text,KeyboardAvoidingView,View, Platform,Alert } from 'react-native';
 
 // import EditScreenInfo from '../components/EditScreenInfo';
 // import { Text, View } from '../components/Themed';
 import { Button } from 'react-native-paper';
+import Spinner from 'react-native-loading-spinner-overlay';
+import axios from 'axios';
+import {useDispatch,useSelector} from 'react-redux';
 
 export default function TabTwoScreen({ navigation }) {
   const [firstName, setFirstName] = useState('');
@@ -14,12 +17,48 @@ export default function TabTwoScreen({ navigation }) {
   const [password, setPassword] = useState('');
   const [confirmPass, setConfirmPass] = useState('');
 
+  const dispatch = useDispatch()
+  const {loading,store}=useSelector(state=> state) 
 
   const [enableshift,setenableShift] = useState(false)
 
   const register = () => {
-    console.log('register')
-    navigation.navigate("Root")
+    if(password===confirmPass){
+      let reqObj = {
+        Firstname : firstName,
+        Lastname  : lastName,
+        Phone : phone,
+        Points : 0, 
+        DOB  : "1992-01-20",
+        Email : email,
+        Password : password
+    }
+    
+      dispatch({type:"SET_LOADING",payload:true})
+      console.log('register req',reqObj)
+
+      axios.post('https://hackcloudfinal.uc.r.appspot.com/register',reqObj)
+        .then(res => {
+          console.log(res.data.data.user[0])
+          dispatch({type:"SET_LOADING",payload:true})
+          dispatch({type:"LOGIN"})
+          dispatch({type:"SET_USER_DETAILS",payload:res.data.data.user[0]})
+          
+        })
+        .catch(err=> {
+          console.log(err)
+          dispatch({type:"SET_LOADING",payload:true})
+          Alert.alert('Something went wrong', 'Please try again', [
+            { text: 'Ok', onPress: () => console.log(123) }
+          ]);
+        })
+      
+    }else{
+      Alert.alert('Form Error', 'Passwords did not match', [
+        { text: 'Ok', onPress: () => console.log(123) }
+      ]);
+    }
+
   }
 
   return (
@@ -28,11 +67,13 @@ export default function TabTwoScreen({ navigation }) {
       behavior={Platform.OS === 'ios' ? 'position' : null}
       style={{flex:1}} 
       enabled={enableshift}
-      keyboardVerticalOffset={200}
       >
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView>
       <Text style={styles.title}>Register</Text>
-      
+      <Spinner
+          visible={loading}
+          textContent={'Loading...'}
+        />
       <TextInput
         style={styles.inputField}
         onChangeText={text => setFirstName(text)}
@@ -94,6 +135,7 @@ export default function TabTwoScreen({ navigation }) {
         Already have an account? Login
         </Text>
       </ScrollView>
+      <View style={{ flex : 1 }} />
     </KeyboardAvoidingView>
     
   );

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { StyleSheet,View,Text,FlatList } from 'react-native';
+import { StyleSheet,View,Text,FlatList,Alert } from 'react-native';
 import {  Button, Card, Title } from 'react-native-paper';
 import {useDispatch,useSelector} from 'react-redux';
 import axios from 'axios';
@@ -9,13 +9,13 @@ import Spinner from 'react-native-loading-spinner-overlay';
 export default function Redeem({navigation}) {
 
   const dispatch = useDispatch()
-  const {loading,store}=useSelector(state=> state) 
-  const userPoints = 1000;
-  console.log('store',store)
+  const {loading,store,user}=useSelector(state=> state) 
 
   useEffect(()=>{
     fetchData();
   },[])
+
+  const {Points} = user;
 
   const storeItemsList = x => {
     return (
@@ -32,7 +32,7 @@ export default function Redeem({navigation}) {
             mode="contained" 
             compact={true} 
             color="gold" 
-            disabled={x.points_to_redeem>userPoints}
+            disabled={x.points_to_redeem>Points}
             onPress = { ()=> navigation.navigate("CheckoutItem",x)}
           >
             {x.points_to_redeem}
@@ -50,6 +50,11 @@ export default function Redeem({navigation}) {
       .then(res => {
         dispatch({type:"SET_LOADING",payload:false});
         dispatch({type:"SET_STORE",payload:res.data.data.store})
+      }).catch(err => {
+        console.log(err)
+        Alert.alert('Something went wrong', 'Please try again', [
+          { text: 'Ok', onPress: () => console.log(123) }
+        ]);
       })
   }
 
@@ -61,7 +66,7 @@ export default function Redeem({navigation}) {
             <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
             <Text style={{color:'white'}}>Points earned so far:  </Text>
               <Button icon="star" mode="contained" compact={true} color="gold" >
-                {userPoints}
+                {Points}
               </Button>
             </View>
           </View>
